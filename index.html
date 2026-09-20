@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiAventura | La Aventura de las Tablas de Multiplicar (del 2 al 13)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        },
+                        accent: {
+                            amber: '#f59e0b',
+                            purple: '#8b5cf6'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        display: ['"Outfit"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body.light {
+            background: radial-gradient(circle at 50% 0%, #f0fdf4 0%, #e2e8f0 100%);
+            color: #0f172a;
+        }
+
+        body.dark {
+            background: radial-gradient(circle at 50% 0%, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1);
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printable-certificate, #printable-certificate * { visibility: visible; }
+            #printable-certificate { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+    </style>
+</head>
+<body class="light flex flex-col justify-between min-h-screen selection:bg-brand-500 selection:text-white" onclick="app.handleFirstInteraction()">
+
+    <header class="relative z-20 w-full max-w-6xl mx-auto px-4 pt-4 pb-2">
+        <div class="glass-panel rounded-2xl p-3 md:p-4 flex items-center justify-between gap-3 transition-all">
+            <div class="flex items-center gap-3.5 cursor-pointer" onclick="app.showScreen('main-menu')">
+                <div class="w-11 h-11 md:w-13 md:h-13 bg-gradient-to-tr from-emerald-500 via-teal-500 to-green-400 rounded-xl flex items-center justify-center text-white text-2xl shadow-md border border-emerald-300/50 transform -rotate-2 hover:rotate-0 transition-all" id="header-avatar-emoji">
+                    🚀
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight text-slate-800 dark:text-emerald-300 font-display">MultiAventura</h1>
+                    <p class="text-xs font-bold text-brand-600 dark:text-emerald-400 uppercase tracking-wider">Tablas de Multiplicar (2 al 13)</p>
+                    <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Diseño y desarrollo: Adry System's</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 md:gap-3">
+                <button onclick="app.toggleTheme()" class="w-10 h-10 rounded-xl bg-slate-200/80 dark:bg-slate-800/80 text-slate-700 dark:text-amber-400 hover:bg-slate-300 dark:hover:bg-slate-700 flex items-center justify-center transition-colors shadow-sm" title="Cambiar Tema">
+                    <i id="theme-icon" class="fa-solid fa-moon"></i>
+                </button>
+
+                <div onclick="app.openStudentModal()" class="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/95 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 cursor-pointer transition-all">
+                    <div class="w-8 h-8 rounded-lg bg-brand-600 text-white flex items-center justify-center text-sm font-bold font-display shadow-sm" id="header-avatar-box">
+                        🚀
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium leading-none" id="header-grade-label">1° de Primaria</p>
+                        <p class="text-sm font-bold text-slate-800 dark:text-slate-100 truncate max-w-[130px]" id="header-student-name">Estudiante</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="relative z-10 w-full max-w-6xl mx-auto px-4 py-4 flex-grow flex flex-col justify-center">
+        
+        <!-- SCREEN 1: MAIN MENU -->
+        <section id="screen-main-menu" class="space-y-6">
+            <div class="glass-panel rounded-3xl p-6 md:p-8 relative overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl">
+                <div class="relative z-10 max-w-2xl">
+                    <span class="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold text-xs uppercase tracking-widest mb-3">
+                        <i class="fa-solid fa-star mr-1"></i> Aprendizaje Divertido (1° a 6° Primaria) • Tablas del 2 al 13
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white font-display leading-tight mb-3">
+                        ¡Domina las tablas del 2 al 13 paso a paso!
+                    </h2>
+                    <p class="text-slate-600 dark:text-slate-300 text-sm md:text-base leading-relaxed mb-6 font-medium">
+                        Elige tu modalidad de juego favorita, aprende jugando y gana tu Reconocimiento Oficial al superar el 80% de aciertos.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="app.openCertificateModal()" class="px-6 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-certificate"></i> Ver Mi Reconocimiento Oficial
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Mode 1: Study -->
+                <div onclick="app.selectGameMode('study')" class="glass-panel glass-card p-5 rounded-2xl cursor-pointer border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-blue-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-book-open"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-display mb-1">Repaso por Tabla</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Elige una tabla del 2 al 13 y practica paso a paso a tu propio ritmo hasta memorizarla.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-brand-600 dark:text-emerald-400">
+                        <span>Iniciar Estudio</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Mode 2: Flashcards -->
+                <div onclick="app.selectGameMode('flashcards')" class="glass-panel glass-card p-5 rounded-2xl cursor-pointer border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-accent-purple flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-display mb-1">Tarjetas Flash</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Voltea tarjetas interactivas mágicas para descubrir la respuesta y entrenar tu memoria visual.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-accent-purple">
+                        <span>Ver Tarjetas</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Mode 3: Challenge -->
+                <div onclick="app.selectGameMode('challenge')" class="glass-panel glass-card p-5 rounded-2xl cursor-pointer border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-display mb-1">Desafío Reloj</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">¡Corre contra el tiempo! Responde preguntas rápidas antes de que el reloj llegue a cero.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-amber-500">
+                        <span>Iniciar Reloj</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Mode 4: Exam -->
+                <div onclick="app.selectGameMode('exam')" class="glass-panel glass-card p-5 rounded-2xl cursor-pointer border border-slate-200/80 dark:border-slate-800 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white font-display mb-1">Examen Oficial</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Demuestra lo que sabes en la prueba oficial y obtén más del 80% para ganar tu diploma.</p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-bold text-emerald-500">
+                        <span>Tomar Examen</span>
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 2: TABLE SELECTOR -->
+        <section id="screen-table-select" class="hidden space-y-6">
+            <div class="flex items-center justify-between">
+                <button onclick="app.showScreen('main-menu')" class="px-4 py-2 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs hover:bg-slate-300 transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </button>
+                <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white font-display" id="selector-title">Selecciona la Tabla (2 al 13)</h2>
+                <div class="w-16"></div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4" id="table-buttons-container"></div>
+        </section>
+
+        <!-- SCREEN 3: GAMEPLAY MODE -->
+        <section id="screen-gameplay" class="hidden space-y-6 max-w-2xl mx-auto w-full">
+            <div class="flex items-center justify-between glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <button onclick="app.showScreen('main-menu')" class="px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs hover:bg-slate-300 transition-colors">
+                    <i class="fa-solid fa-xmark"></i> Salir
+                </button>
+                <div class="flex items-center gap-4 text-xs font-bold">
+                    <div class="text-amber-500 flex items-center gap-1.5">
+                        <i class="fa-solid fa-star"></i> <span id="game-score">Puntos: 0</span>
+                    </div>
+                    <div class="text-brand-600 dark:text-emerald-400 flex items-center gap-1.5" id="game-timer-container">
+                        <i class="fa-solid fa-stopwatch"></i> <span id="game-timer">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-8 md:p-12 rounded-3xl text-center border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="inline-block px-3 py-1 rounded-lg bg-brand-500/10 text-brand-600 dark:text-emerald-400 font-bold text-xs uppercase" id="game-mode-badge">Desafío Dinámico</span>
+                    <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest" id="question-number">Pregunta 1 de 10</p>
+                </div>
+                
+                <div class="my-6">
+                    <h2 class="text-4xl md:text-6xl font-black text-slate-900 dark:text-white font-display tracking-wide" id="question-text">
+                        13 × 8 = ?
+                    </h2>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-medium" id="question-hint">Selecciona la respuesta correcta</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 md:gap-4 mt-8" id="options-container"></div>
+            </div>
+        </section>
+
+        <!-- SCREEN 3B: FLASHCARDS MODE -->
+        <section id="screen-flashcards" class="hidden space-y-6 max-w-xl mx-auto w-full">
+            <div class="flex items-center justify-between glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800">
+                <button onclick="app.showScreen('main-menu')" class="px-3 py-1.5 rounded-xl bg-slate-200/70 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-xs hover:bg-slate-300 transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Menú
+                </button>
+                <p class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider">Tarjetas Flash (Tablas 2 al 13)</p>
+            </div>
+
+            <div class="glass-panel p-8 md:p-12 rounded-3xl text-center border border-slate-200 dark:border-slate-800 shadow-xl select-none">
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Tarjeta <span id="flash-idx">1</span> de <span id="flash-total">12</span></p>
+                
+                <div class="py-12 flex flex-col items-center justify-center min-h-[220px]">
+                    <div id="flash-card-box" onclick="app.flipCard()" class="w-full py-10 px-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-indigo-500/10 border-2 border-purple-300 dark:border-purple-800 cursor-pointer hover:scale-[1.02] transition-all shadow-inner">
+                        <p class="text-xs font-bold text-purple-600 dark:text-purple-400 mb-2 uppercase tracking-widest" id="flash-prompt-label">Pregunta (Toca para voltear)</p>
+                        <h2 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white font-display" id="flash-card-content">
+                            13 × 8 = ?
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between gap-4 mt-4">
+                    <button onclick="app.prevFlashcard()" class="px-5 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-300 transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-arrow-left"></i> Anterior
+                    </button>
+                    <button onclick="app.flipCard()" class="px-5 py-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs transition-colors shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate"></i> Voltear Tarjeta
+                    </button>
+                    <button onclick="app.nextFlashcard()" class="px-5 py-3 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs hover:bg-slate-300 transition-colors flex items-center gap-1.5">
+                        Siguiente <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: RESULTS SUMMARY -->
+        <section id="screen-results" class="hidden max-w-xl mx-auto w-full">
+            <div class="glass-panel p-8 rounded-3xl text-center border border-slate-200 dark:border-slate-800 shadow-xl animate-pop">
+                <div class="w-20 h-20 rounded-3xl bg-amber-500/10 text-amber-500 mx-auto flex items-center justify-center text-4xl mb-4" id="res-icon">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+
+                <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white font-display mb-1" id="res-title">¡Gran Trabajo!</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mb-6" id="res-subtitle">Has completado la actividad con éxito</p>
+
+                <div class="bg-slate-100 dark:bg-slate-900/60 rounded-2xl p-4 mb-6 grid grid-cols-2 gap-4 border border-slate-200 dark:border-slate-800">
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Puntaje Obtenido</p>
+                        <p class="text-2xl font-black text-brand-600 dark:text-emerald-400 font-display" id="res-score">0</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-medium">Porcentaje de Logro</p>
+                        <p class="text-2xl font-black text-emerald-500 font-display" id="res-accuracy">100%</p>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-semibold mb-6" id="res-certificate-status">
+                    ¡Has superado el 80% de logro! Tu Reconocimiento Oficial se encuentra disponible.
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="app.showScreen('main-menu')" class="flex-1 py-3 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-100 font-bold text-sm hover:bg-slate-300 transition-colors">
+                        Menú Principal
+                    </button>
+                    <button onclick="app.openCertificateModal()" id="btn-view-certificate" class="flex-1 py-3 rounded-2xl bg-amber-500 text-slate-950 font-bold text-sm hover:bg-amber-600 transition-colors shadow-md">
+                        Ver Reconocimiento Oficial
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-20 w-full text-center py-4 border-t border-slate-200/80 dark:border-slate-800/80 mt-auto bg-slate-100/60 dark:bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <p>MultiAventura &copy; 2026 - Tablas de Multiplicar (2 al 13)</p>
+            <p class="tracking-wide">
+                Diseño y desarrollo: Adry System's
+            </p>
+        </div>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <div id="student-modal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4 hidden overflow-y-auto">
+        <div class="glass-panel max-w-lg w-full p-6 md:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl animate-pop my-auto">
+            <div class="text-center mb-5">
+                <div class="w-14 h-14 rounded-2xl bg-brand-500/10 text-brand-600 dark:text-emerald-400 mx-auto flex items-center justify-center text-3xl mb-3 shadow-inner">
+                    🎓
+                </div>
+                <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white font-display">Registro del Alumno</h3>
+                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 mt-1">Escribe tu nombre completo:</p>
+            </div>
+
+            <form onsubmit="app.saveStudentProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Nombre Completo del Alumno:</label>
+                    <input type="text" id="input-student-name" placeholder="Ej. Sofía Valentina Morales" required class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold text-sm focus:border-brand-500 outline-none transition-colors">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1.5">Grado Escolar (Primaria):</label>
+                    <select id="input-student-grade" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold text-sm focus:border-brand-500 outline-none transition-colors">
+                        <option value="1° de Primaria" selected>1° de Primaria (Iniciación y Sumas)</option>
+                        <option value="2° de Primaria">2° de Primaria (Tablas 2, 3, 4 y 5)</option>
+                        <option value="3° de Primaria">3° de Primaria (Tablas 2 al 10)</option>
+                        <option value="4° de Primaria">4° de Primaria (Tablas del 2 al 13)</option>
+                        <option value="5° de Primaria">5° de Primaria (Dominio y Retos Rápidos)</option>
+                        <option value="6° de Primaria">6° de Primaria (Experto en Multiplicaciones)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-2">Selecciona tu Avatar:</label>
+                    <div class="grid grid-cols-6 gap-2" id="avatar-selector-grid"></div>
+                </div>
+
+                <div class="flex gap-2 pt-2">
+                    <button type="button" onclick="app.closeStudentModal()" id="btn-cancel-modal" class="flex-1 py-3 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-300 transition-colors hidden">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="flex-1 py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition-colors">
+                        ¡Comenzar Aventura!
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="certificate-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden overflow-y-auto">
+        <div class="max-w-3xl w-full my-auto space-y-4">
+            <div class="flex items-center justify-between text-white px-2">
+                <span class="font-bold text-sm font-display"><i class="fa-solid fa-certificate text-amber-400 mr-2"></i> Reconocimiento Académico Oficial</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" id="cert-print-btn" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-colors flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-print"></i> Imprimir / PDF
+                    </button>
+                    <button onclick="app.closeCertificateModal()" class="px-3 py-2 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 text-xs font-bold transition-colors">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="printable-certificate" class="bg-white text-slate-900 p-8 md:p-12 rounded-3xl border-8 border-amber-400 shadow-2xl relative overflow-hidden text-center">
+                <div class="absolute top-0 left-0 w-24 h-24 border-t-8 border-l-8 border-slate-900 m-2 pointer-events-none"></div>
+                <div class="absolute top-0 right-0 w-24 h-24 border-t-8 border-r-8 border-slate-900 m-2 pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 border-b-8 border-l-8 border-slate-900 m-2 pointer-events-none"></div>
+                <div class="absolute bottom-0 right-0 w-24 h-24 border-b-8 border-r-8 border-slate-900 m-2 pointer-events-none"></div>
+
+                <div class="text-4xl mb-2" id="cert-avatar-display">🚀</div>
+                <p class="text-xs uppercase tracking-[0.3em] text-amber-600 font-extrabold mb-1">Reconocimiento Académico Oficial</p>
+                <h2 class="text-2xl md:text-4xl font-black font-display text-slate-900 tracking-tight uppercase mb-3">
+                    DIPLOMA DE EXCELENCIA
+                </h2>
+                <p class="text-slate-600 font-serif italic text-xs md:text-sm mb-4">
+                    Se otorga con orgullo el presente reconocimiento oficial a:
+                </p>
+
+                <div class="border-b-2 border-slate-900 pb-2 mb-4 max-w-lg mx-auto">
+                    <h3 class="text-xl md:text-3xl font-extrabold font-display text-brand-700 uppercase tracking-wide" id="cert-student-name">
+                        ESTUDIANTE DESTACADO
+                    </h3>
+                </div>
+
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3" id="cert-grade-display">1° de Primaria</p>
+
+                <p class="text-slate-700 text-xs md:text-sm max-w-xl mx-auto leading-relaxed mb-6" id="cert-details-text">
+                    Por haber demostrado sobresaliente destreza y brillantez matemática al superar con éxito el <strong>Examen Oficial de Multiplicaciones (Tablas 2 al 13)</strong> en la plataforma MultiAventura.
+                </p>
+
+                <div class="grid grid-cols-2 gap-8 pt-4 border-t border-slate-200 items-end max-w-xl mx-auto">
+                    <div>
+                        <p class="text-xs font-bold text-slate-800" id="cert-date">20 de Septiembre, 2026</p>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Fecha de Emisión</p>
+                    </div>
+                    <div>
+                        <div class="font-display font-black text-amber-600 text-sm">Adry System's</div>
+                        <p class="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">Diseño y Desarrollo</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 text-slate-950 font-black text-xl shadow-lg border-2 border-amber-600">
+                    <i class="fa-solid fa-ribbon"></i>
+                </div>
+            </div>
+
+            <div id="certificate-locked-notice" class="glass-panel p-6 rounded-3xl text-center text-white hidden bg-slate-900/90 border border-slate-700">
+                <div class="text-4xl mb-2">🔒</div>
+                <h3 class="text-xl font-bold font-display text-amber-400 mb-2">Reconocimiento Bloqueado</h3>
+                <p class="text-xs text-slate-300 max-w-md mx-auto mb-4">
+                    Para obtener tu Reconocimiento Oficial firmado, debes completar el <strong>Examen Oficial</strong> y obtener un porcentaje de aciertos superior al <strong>80%</strong>. ¡Tú puedes lograrlo!
+                </p>
+                <button onclick="app.selectGameMode('exam'); app.closeCertificateModal();" class="px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs shadow-md transition-colors">
+                    Tomar Examen Oficial Ahora
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MultiApp {
+            constructor() {
+                this.studentName = localStorage.getItem('multi_student_name') || '';
+                this.studentGrade = localStorage.getItem('multi_student_grade') || '1° de Primaria';
+                this.studentAvatar = localStorage.getItem('multi_student_avatar') || '🚀';
+                
+                this.score = 0;
+                this.currentMode = 'study';
+                this.selectedTable = 2;
+                this.questions = [];
+                this.currentQuestionIdx = 0;
+                this.correctAnswers = 0;
+                this.timer = null;
+                this.timeLeft = 60;
+                this.latestAccuracy = Number(localStorage.getItem('multi_latest_accuracy') || 0);
+                this.examCompleted = localStorage.getItem('multi_exam_completed') === 'true';
+                this.isFlipped = false;
+                this.hasWelcomed = false;
+
+                this.avatarsList = ['🚀', '🦊', '🦁', '🐼', '🦄', '🦖', '⚽', '🎨', '🎸', '🌟', '🤖', '👑'];
+
+                this.initUI();
+                
+                if (!this.studentName) {
+                    this.openStudentModal(true);
+                }
+            }
+
+            initUI() {
+                this.renderAvatarSelector();
+                this.updateHeaderProfile();
+                this.renderTableSelector();
+                this.updateCertificateDate();
+                this.checkCertificateAvailability();
+            }
+
+            handleFirstInteraction() {
+                // Se asegura de que la bienvenida por voz solo ocurra una sola vez en toda la sesión
+                if (!this.hasWelcomed) {
+                    this.hasWelcomed = true;
+                    this.speakWelcome();
+                }
+            }
+
+            toggleTheme() {
+                this.playClickSound(true);
+                const body = document.body;
+                const icon = document.getElementById('theme-icon');
+                if (body.classList.contains('light')) {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    icon.className = 'fa-solid fa-sun';
+                } else {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    icon.className = 'fa-solid fa-moon';
+                }
+            }
+
+            renderAvatarSelector() {
+                const grid = document.getElementById('avatar-selector-grid');
+                if (!grid) return;
+                grid.innerHTML = '';
+                this.avatarsList.forEach(av => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    const isSelected = this.studentAvatar === av;
+                    btn.className = `w-11 h-11 rounded-xl text-xl flex items-center justify-center transition-all ${isSelected ? 'bg-brand-600 text-white shadow-md scale-105 ring-2 ring-brand-400' : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200'}`;
+                    btn.innerHTML = av;
+                    btn.onclick = () => {
+                        this.playClickSound(true);
+                        this.studentAvatar = av;
+                        this.renderAvatarSelector();
+                    };
+                    grid.appendChild(btn);
+                });
+            }
+
+            updateHeaderProfile() {
+                const nameDisplay = this.studentName || 'Estudiante';
+                document.getElementById('header-student-name').innerText = nameDisplay;
+                document.getElementById('header-grade-label').innerText = this.studentGrade;
+                document.getElementById('header-avatar-box').innerText = this.studentAvatar;
+                document.getElementById('header-avatar-emoji').innerText = this.studentAvatar;
+                document.getElementById('cert-student-name').innerText = nameDisplay;
+                document.getElementById('cert-grade-display').innerText = this.studentGrade;
+                document.getElementById('cert-avatar-display').innerText = this.studentAvatar;
+            }
+
+            openStudentModal(isFirstTime = false) {
+                this.playClickSound(true);
+                document.getElementById('input-student-name').value = this.studentName;
+                document.getElementById('input-student-grade').value = this.studentGrade || '1° de Primaria';
+                const cancelBtn = document.getElementById('btn-cancel-modal');
+                if (isFirstTime) {
+                    cancelBtn.classList.add('hidden');
+                } else {
+                    cancelBtn.classList.remove('hidden');
+                }
+                this.renderAvatarSelector();
+                document.getElementById('student-modal').classList.remove('hidden');
+            }
+
+            closeStudentModal() {
+                this.playClickSound(true);
+                if (!this.studentName) return;
+                document.getElementById('student-modal').classList.add('hidden');
+            }
+
+            saveStudentProfile(e) {
+                e.preventDefault();
+                this.playClickSound(true);
+                const name = document.getElementById('input-student-name').value.trim();
+                const grade = document.getElementById('input-student-grade').value;
+                if (name) {
+                    this.studentName = name;
+                    this.studentGrade = grade;
+                    localStorage.setItem('multi_student_name', name);
+                    localStorage.setItem('multi_student_grade', grade);
+                    localStorage.setItem('multi_student_avatar', this.studentAvatar);
+                    this.updateHeaderProfile();
+                    this.closeStudentModal();
+                    // Evitamos duplicar la llamada aquí ya que handleFirstInteraction o el inicio ya gestionan la bienvenida de forma controlada
+                }
+            }
+
+            speakWelcome() {
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    const text = "Bienvenido a la práctica de tablas de multiplicación para el nivel primaria, éxito...";
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.lang = 'es-MX';
+                    utterance.rate = 0.95;
+                    utterance.pitch = 1.3; // Tono dulce amigable
+
+                    const voices = window.speechSynthesis.getVoices();
+                    const spanishVoice = voices.find(v => v.lang.includes('es') && (v.name.includes('Lucia') || v.name.includes('Sabina') || v.name.includes('Elena') || v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Female'))) || voices.find(v => v.lang.includes('es'));
+                    if (spanishVoice) {
+                        utterance.voice = spanishVoice;
+                    }
+
+                    window.speechSynthesis.speak(utterance);
+                }
+            }
+
+            playClickSound(isCorrect) {
+                try {
+                    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    if (isCorrect === true) {
+                        // Pleasant success chime
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.08); // E5
+                        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.16); // G5
+                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.35);
+                    } else if (isCorrect === false) {
+                        // Gentle error buzz
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                        osc.frequency.setValueAtTime(140, audioCtx.currentTime + 0.1);
+                        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.25);
+                    } else {
+                        // Soft UI click pop
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                        osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.05);
+                        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start();
+                        osc.stop(audioCtx.currentTime + 0.08);
+                    }
+                } catch (e) {
+                    // Audio context safeguard
+                }
+            }
+
+            openCertificateModal() {
+                this.playClickSound(true);
+                this.checkCertificateAvailability();
+                document.getElementById('certificate-modal').classList.remove('hidden');
+            }
+
+            closeCertificateModal() {
+                this.playClickSound(null);
+                document.getElementById('certificate-modal').classList.add('hidden');
+            }
+
+            updateCertificateDate() {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('cert-date').innerText = new Date().toLocaleDateString('es-ES', options);
+            }
+
+            checkCertificateAvailability() {
+                const certCanvas = document.getElementById('printable-certificate');
+                const lockedNotice = document.getElementById('certificate-locked-notice');
+                const printBtn = document.getElementById('cert-print-btn');
+
+                if (this.examCompleted && this.latestAccuracy >= 80) {
+                    certCanvas.classList.remove('hidden');
+                    lockedNotice.classList.add('hidden');
+                    if (printBtn) printBtn.classList.remove('hidden');
+                } else {
+                    certCanvas.classList.add('hidden');
+                    lockedNotice.classList.remove('hidden');
+                    if (printBtn) printBtn.classList.add('hidden');
+                }
+            }
+
+            showScreen(screenId) {
+                this.playClickSound(null);
+                const screens = ['main-menu', 'table-select', 'gameplay', 'flashcards', 'results'];
+                screens.forEach(s => {
+                    const el = document.getElementById(`screen-${s}`);
+                    if (el) el.classList.add('hidden');
+                });
+                document.getElementById(`screen-${screenId}`).classList.remove('hidden');
+            }
+
+            selectGameMode(mode) {
+                this.playClickSound(true);
+                this.currentMode = mode;
+                if (mode === 'study') {
+                    document.getElementById('selector-title').innerText = 'Selecciona la Tabla (2 al 13)';
+                    this.showScreen('table-select');
+                } else if (mode === 'flashcards') {
+                    this.startFlashcardsMode();
+                } else if (mode === 'challenge') {
+                    this.startTimedChallenge();
+                } else if (mode === 'exam') {
+                    this.startExamMode();
+                }
+            }
+
+            renderTableSelector() {
+                const container = document.getElementById('table-buttons-container');
+                if (!container) return;
+                container.innerHTML = '';
+
+                for (let i = 2; i <= 13; i++) {
+                    const btn = document.createElement('button');
+                    btn.className = 'glass-panel p-4 rounded-2xl border border-slate-200 dark:border-slate-800 text-center hover:border-brand-500 transition-all font-display font-extrabold text-xl text-slate-800 dark:text-white flex flex-col items-center justify-center gap-1 group';
+                    btn.innerHTML = `
+                        <span class="text-[11px] text-slate-400 uppercase tracking-widest font-sans font-bold">Tabla del</span>
+                        <span class="text-3xl text-brand-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">${i}</span>
+                    `;
+                    btn.onclick = () => {
+                        this.selectedTable = i;
+                        this.startTableStudy(i);
+                    };
+                    container.appendChild(btn);
+                }
+            }
+
+            startTableStudy(tableNum) {
+                this.playClickSound(true);
+                this.questions = [];
+                for (let i = 1; i <= 10; i++) {
+                    this.questions.push({
+                        a: tableNum,
+                        b: i,
+                        ans: tableNum * i,
+                        text: `${tableNum} × ${i} = ?`,
+                        hint: `Multiplicación exacta de la tabla del ${tableNum}`
+                    });
+                }
+                this.currentQuestionIdx = 0;
+                this.score = 0;
+                this.correctAnswers = 0;
+                document.getElementById('game-mode-badge').innerText = `Repaso Tabla del ${tableNum}`;
+                document.getElementById('game-timer-container').classList.add('hidden');
+                this.showScreen('gameplay');
+                this.renderQuestion();
+            }
+
+            startFlashcardsMode() {
+                this.playClickSound(true);
+                this.questions = [];
+                for (let a = 2; a <= 13; a++) {
+                    for (let b = 1; b <= 10; b++) {
+                        this.questions.push({ a, b, ans: a * b });
+                    }
+                }
+                this.questions.sort(() => Math.random() - 0.5);
+                this.questions = this.questions.slice(0, 15);
+                this.currentQuestionIdx = 0;
+                this.isFlipped = false;
+                document.getElementById('flash-total').innerText = this.questions.length;
+                this.showScreen('flashcards');
+                this.renderFlashcard();
+            }
+
+            renderFlashcard() {
+                const q = this.questions[this.currentQuestionIdx];
+                if (!q) return;
+                document.getElementById('flash-idx').innerText = `${this.currentQuestionIdx + 1}`;
+                const content = document.getElementById('flash-card-content');
+                const promptLabel = document.getElementById('flash-prompt-label');
+                
+                if (this.isFlipped) {
+                    promptLabel.innerText = "Respuesta Correcta:";
+                    content.innerHTML = `<span class="text-amber-500">${q.a} × ${q.b} = ${q.ans}</span>`;
+                } else {
+                    promptLabel.innerText = "Pregunta (Toca para voltear)";
+                    content.innerHTML = `<span class="text-slate-900 dark:text-white">${q.a} × ${q.b} = ?</span>`;
+                }
+            }
+
+            flipCard() {
+                this.playClickSound(null);
+                this.isFlipped = !this.isFlipped;
+                this.renderFlashcard();
+            }
+
+            nextFlashcard() {
+                this.playClickSound(null);
+                this.isFlipped = false;
+                this.currentQuestionIdx = (this.currentQuestionIdx + 1) % this.questions.length;
+                this.renderFlashcard();
+            }
+
+            prevFlashcard() {
+                this.playClickSound(null);
+                this.isFlipped = false;
+                this.currentQuestionIdx = (this.currentQuestionIdx - 1 + this.questions.length) % this.questions.length;
+                this.renderFlashcard();
+            }
+
+            startTimedChallenge() {
+                this.playClickSound(true);
+                this.questions = [];
+                for (let i = 0; i < 15; i++) {
+                    const type = Math.floor(Math.random() * 3);
+                    const a = Math.floor(Math.random() * 12) + 2;
+                    const b = Math.floor(Math.random() * 10) + 1;
+                    
+                    if (type === 0) {
+                        this.questions.push({ a, b, ans: a * b, text: `${a} × ${b} = ?`, hint: 'Cálculo rápido' });
+                    } else if (type === 1) {
+                        this.questions.push({ a, b, ans: a, text: `? × ${b} = ${a * b}`, hint: 'Encuentra el número faltante' });
+                    } else {
+                        const items = ['manzanas', 'estrellas', 'canicas', 'libros', 'flores'];
+                        const item = items[Math.floor(Math.random() * items.length)];
+                        this.questions.push({ 
+                            a, b, ans: a * b, 
+                            text: `Si hay ${a} cajas con ${b} ${item} cada una, ¿cuántas hay en total?`, 
+                            hint: 'Problema razonado' 
+                        });
+                    }
+                }
+                this.currentQuestionIdx = 0;
+                this.score = 0;
+                this.correctAnswers = 0;
+                this.timeLeft = 60;
+                document.getElementById('game-mode-badge').innerText = 'Desafío Reloj (Tablas 2 al 13)';
+                document.getElementById('game-timer-container').classList.remove('hidden');
+                this.showScreen('gameplay');
+                this.startTimer();
+                this.renderQuestion();
+            }
+
+            startExamMode() {
+                this.playClickSound(true);
+                this.questions = [];
+                for (let i = 0; i < 12; i++) {
+                    const a = Math.floor(Math.random() * 12) + 2;
+                    const b = Math.floor(Math.random() * 10) + 1;
+                    const type = i % 2 === 0 ? 0 : 1;
+                    
+                    if (type === 0) {
+                        this.questions.push({ a, b, ans: a * b, text: `${a} × ${b} = ?`, hint: 'Evaluación Oficial' });
+                    } else {
+                        this.questions.push({ a, b, ans: a, text: `¿Qué número multiplicado por ${b} da ${a * b}?`, hint: 'Operación inversa' });
+                    }
+                }
+                this.currentQuestionIdx = 0;
+                this.score = 0;
+                this.correctAnswers = 0;
+                document.getElementById('game-mode-badge').innerText = 'Examen Oficial (Tablas 2 al 13)';
+                document.getElementById('game-timer-container').classList.add('hidden');
+                this.showScreen('gameplay');
+                this.renderQuestion();
+            }
+
+            startTimer() {
+                clearInterval(this.timer);
+                document.getElementById('game-timer').innerText = `${this.timeLeft}s`;
+                this.timer = setInterval(() => {
+                    this.timeLeft--;
+                    document.getElementById('game-timer').innerText = `${this.timeLeft}s`;
+                    if (this.timeLeft <= 0) {
+                        clearInterval(this.timer);
+                        this.finishGame();
+                    }
+                }, 1000);
+            }
+
+            renderQuestion() {
+                const q = this.questions[this.currentQuestionIdx];
+                if (!q) {
+                    this.finishGame();
+                    return;
+                }
+
+                document.getElementById('question-number').innerText = `Pregunta ${this.currentQuestionIdx + 1} de ${this.questions.length}`;
+                document.getElementById('question-text').innerText = q.text;
+                document.getElementById('question-hint').innerText = q.hint;
+                document.getElementById('game-score').innerText = `Puntos: ${this.score}`;
+
+                const options = [q.ans];
+                while (options.length < 4) {
+                    const offset = (Math.floor(Math.random() * 6) + 1) * (Math.random() > 0.5 ? 1 : -1);
+                    const fake = Math.max(1, q.ans + offset);
+                    if (!options.includes(fake)) options.push(fake);
+                }
+                options.sort(() => Math.random() - 0.5);
+
+                const container = document.getElementById('options-container');
+                container.innerHTML = '';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'p-4 md:p-5 rounded-2xl bg-slate-100 dark:bg-slate-800/80 hover:bg-brand-600 hover:text-white dark:hover:bg-brand-600 text-slate-800 dark:text-white font-extrabold text-2xl md:text-3xl font-display transition-all border border-slate-200 dark:border-slate-700 active:scale-95 shadow-sm';
+                    btn.innerText = opt;
+                    btn.onclick = () => this.checkAnswer(opt, q.ans);
+                    container.appendChild(btn);
+                });
+            }
+
+            checkAnswer(selected, correct) {
+                const isCorrect = (selected === correct);
+                this.playClickSound(isCorrect);
+                if (isCorrect) {
+                    this.score += 100;
+                    this.correctAnswers++;
+                }
+                this.currentQuestionIdx++;
+                this.renderQuestion();
+            }
+
+            finishGame() {
+                clearInterval(this.timer);
+                const totalQ = this.questions.length || 1;
+                const accuracy = Math.round((this.correctAnswers / totalQ) * 100);
+                
+                this.latestAccuracy = accuracy;
+                this.latestScore = this.score;
+                
+                if (this.currentMode === 'exam') {
+                    this.examCompleted = true;
+                    localStorage.setItem('multi_exam_completed', 'true');
+                }
+
+                localStorage.setItem('multi_latest_accuracy', accuracy);
+                localStorage.setItem('multi_latest_score', this.score);
+
+                document.getElementById('res-score').innerText = this.score;
+                document.getElementById('res-accuracy').innerText = `${accuracy}%`;
+
+                const statusBox = document.getElementById('res-certificate-status');
+                const certBtn = document.getElementById('btn-view-certificate');
+
+                if (accuracy >= 80) {
+                    statusBox.className = 'p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-semibold mb-6';
+                    statusBox.innerHTML = `🎉 ¡Excelente! Has obtenido un <strong>${accuracy}%</strong> de aciertos. ¡Tu Reconocimiento Oficial ha sido desbloqueado!`;
+                    certBtn.classList.remove('hidden');
+                } else {
+                    statusBox.className = 'p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-semibold mb-6';
+                    statusBox.innerHTML = `💡 Obtuviste un <strong>${accuracy}%</strong>. Para desbloquear el Reconocimiento Oficial necesitas al menos un <strong>80%</strong>. ¡Inténtalo de nuevo!`;
+                    certBtn.classList.add('hidden');
+                }
+
+                this.checkCertificateAvailability();
+                this.showScreen('results');
+            }
+        }
+
+        let app;
+        window.addEventListener('DOMContentLoaded', () => {
+            app = new MultiApp();
+            // Eliminamos la llamada automática repetida con setTimeout para que la bienvenida dependa puramente de la primera interacción del usuario o suceda de forma única.
+        });
+    </script>
+</body>
+</html>
